@@ -1,0 +1,362 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{hyperref}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\graphicspath{{Figuras/}}
+
+\title{\textbf{\huge{Solución a la Ecuación del Calor en 3 
+Dimensiones}}}
+\author{Joaqu\'in Parra}
+\begin{document}
+\maketitle
+\tableofcontents
+
+
+\section*{Introducci\'on}
+Considérese la ecuación de difusión del calor en tres dimensiones dependiente del tiempo:
+\begin{equation}
+  \nabla^2 \psi - \frac{1}{\alpha}\frac{\partial \psi}{\partial t} = 0,
+\end{equation}
+o de forma equivalente:
+\begin{equation}
+ \frac{\partial^2 \psi}{\partial x^2} +  \frac{\partial^2 \psi}{\partial y^2} + 
+   \frac{\partial^2 \psi}{\partial z^2} - \frac{1}{\alpha}\frac{\partial \psi}{\partial t} = 0, \label{eq:heat}
+\end{equation}
+con $\psi = \psi(\vec{x}, t) = \psi(x, y, z, t)$ sujeta a:
+\begin{equation}
+  \begin{aligned}
+    x,y,z \in (-\infty, \infty),\; &t\in [0,  \infty),\\
+    \\
+    \lim_{x,y,z \rightarrow \pm \infty} \psi(\vec{x},t) &= 0, \\
+    \\
+    \psi(\vec{x},0) &= \phi(\vec{x}).
+  \end{aligned}
+\end{equation}
+
+Es decir, un dominio sobre todo el espacio, y tiempos positivos. Se resolver\'a un caso particular donde se hará uso del método de las transformadas integrales, en particular, la transformada de Fourier para una funci\'on $\psi(\vec{x},t)$ que satisfaga $\psi(\vec{x},0) = \phi(\vec{x})= T_0 \;\delta^{(3)}(\vec{x})$ (delta de Dirac tridimensional).
+
+\section{Transformada de Fourier}
+ Para funciones $f\in L^1(\mathbb{R})$, se define la transformada de Fourier:
+ \begin{equation}
+   \hat{f}(\omega) = \mathcal{F}[f](\omega)= \int_{-\infty}^{\infty}dx\; f(x)e^{-i\omega x},
+ \end{equation}
+ y la transformada de Fourier inversa:
+ \begin{equation}
+   f(x) = \mathcal{F}^{-1}[{\hat{f}}](x) = \frac{1}{2\pi}\int_{-\infty}^{\infty} d\omega \; \hat{f}(\omega) e^{i\omega x}.
+ \end{equation}
+ La generalización a mayores dimensiones, como en nuestro caso (3 dimensiones espaciales), viene dada por:
+ \begin{equation}
+   \hat{f}(\vec{\omega}) = \mathcal{F}[f](\vec{\omega})= \int_{-\infty}^{\infty}d^jx \; f(\vec{x}) e^{-i(\vec{\omega} \cdot \vec{x})},
+ \end{equation}
+ con su respectiva transformada inversa:
+\begin{equation}
+  f(\vec{x}) = \mathcal{F}^{-1}[\hat{f}](\vec{x})= \frac{1}{(2\pi)^j}\int_{-\infty}^{\infty}d^j\omega \; \hat{f}(\vec{\omega}) e^{i(\vec{\omega} \cdot \vec{x})},
+ \end{equation}
+ con $j$ siendo el número de dimensiones en cuestión, y $i$ la unidad imaginaria. Los elementos $d^jx$ hacen referencia a los diferenciales por cada dimensión (en 3 dimensiones, $d^3x = dx\; dy \; dz$).
+ \section{Propiedades Importantes}
+ \subsection{Derivadas}
+  Si $f$ es una función que se anula cuando $x \rightarrow \pm \infty$, la transformada de Fourier de la derivada $n$-ésima de la función, es decir, $\mathcal{F}[f^{(n)}](\omega)$, satisface:
+  \begin{equation}
+    \mathcal{F}[f^{(n)}](\omega)= (i\omega)^n \mathcal{F}[f](\omega).
+  \end{equation}
+  La demostración resulta simple. Se inicia con el caso $n=1$ utilizando integración por partes, tal que:
+  \begin{equation}
+   \begin{aligned}
+     \mathcal{F}[f^{(1)}](\omega)&= \int_{-\infty}^{\infty} dx \; f'(x)e^{-i\omega x} \\
+     &= \left. f(x)e^{-i\omega x} \right|_{-\infty}^{\infty} - i\omega \int_{-\infty}^{\infty} dx \; f(x)e^{-i\omega x} \\
+    &= - i\omega \int_{-\infty}^{\infty} dx \; f(x)e^{-i\omega x} \\
+     &= -i\omega \mathcal{F}[f](\omega) \label{eq: deriv}
+    \end{aligned}
+  \end{equation}
+  donde se ha eliminado el producto de $f$ con la exponencial pues se partió con la hipótesis de que $f$ se anulaba cuando $x$ tendía a infinito. Iterando varias veces se puede demostrar que esto es verdad para $f^{(n)}$.
+  
+  \subsection{Integración por Partes en Varias Variables}
+ Es necesario rescatar la integración por partes para más adelante. Supongamos que tenemos un campo escalar $f: \mathbb{R}^n \to \mathbb{R}$ diferenciable. Continuemos bajo la hipótesis de que para $f(\vec{x})=f(x_1, x_2, \dots, x_n)$, si $x_j \to \pm \infty, \; f(\vec{x}) = 0$ para $x_j$ una componente del vector $\vec{x}$, $f$ y sus derivadas bien comportadas. Con esto en mente, consideremos la integral multiple sobre todas las componentes de $\vec{x} \in \mathbb{R}^n$:
+ \begin{equation}
+   \begin{aligned}
+     I &=  \int_{-\infty}^{\infty} d^nx \; \frac{\partial f}{\partial x_j}  \; e^{-(\vec{\lambda} \cdot \vec{x})} \\
+     &= 
+     \underbrace{\int_{-\infty}^{\infty}  \cdots \int_{-\infty}^{\infty} }_{n} \; dx_1 \cdots dx_n \; \frac{\partial f}{\partial x_j} \; e^{-(\vec{\lambda}  \cdot \vec{x})}
+   \end{aligned}
+   \end{equation}
+   con $\vec{\lambda} \in \mathbb{R}^n$ constante. Suponiendo que el producto entre la derivada parcial de $f$ y la exponencial de la integral es una funci\'on bien comportada, podemos aplicar el teorema de Fubini e intercambiar el orden de integraci\'on, tal que integremos primero respecto a la componente $x_j$. Al ser una integral respecto a una variable, podemos hacer uso de la integraci\'on por partes:
+   \begin{equation}
+    \begin{aligned}
+      I &= \int_{-\infty}^{\infty} dx_j \; \frac{\partial f}{\partial x_j} \; e^{-(\vec{\lambda} \cdot \vec{x})} \\
+        &= \left. f(\vec{x})\; e^{-(\vec{\lambda} \cdot \vec{x})} \right|_{-\infty}^{\infty} \;  - \int_{-\infty}^{\infty} dx_j \; f(\vec{x}) \; \frac{\partial}{\partial x_j} e^{-(\vec{\lambda} \cdot \vec{x})}\\
+         \end{aligned}
+   \end{equation}
+   Recordemos que $e^{-(\vec{\lambda} \cdot \vec{x})} = \exp \left(- \sum_{k=1}^{n} \lambda_k x_k \right)$, por lo que es que es f\'acil ver que $\partial_{x_j} e^{-(\vec{\lambda} \cdot \vec{x})} = -\lambda_j \; e^{-(\vec{\lambda} \cdot \vec{x})}$. Por lo tanto: 
+   \begin{equation}
+     I=  -\lambda_j \int_{-\infty}^{\infty} dx_j \; f(\vec{x}) \; e^{-(\vec{\lambda} \cdot \vec{x})}\label{eq:partial} 
+   \end{equation}
+   donde se ha recuperado la relaci\'on \eqref{eq: deriv} (basta reemplazar $\vec{\lambda} = i\vec{\omega}$) y se us\'o el hecho que $f$ se anula cuando una componente tiende a infinito. Esto ser\'a importante m\'as adelante.
+
+
+\section{Transformadas \'Utiles}
+   
+   \subsection{Gaussiana ($\alpha > 0$)}
+   \begin{equation}
+     \begin{aligned}
+     \mathcal{F}[e^{-\alpha x^2}](\omega) &= \int_{-\infty}^{\infty} dx \; e^{-\alpha x^2} e^{-i\omega x} \\
+       &= \int_{-\infty}^{\infty} dx \; e^{-(\alpha x^2 + i\omega x)} \label{eq:gay}
+    \end{aligned}
+     \end{equation}
+Notar que el exponente se puede expresar expresar como:
+\begin{equation}
+  \begin{aligned}
+    \alpha x^2 + i\omega x &=  \alpha \left ( x^2 + \frac{i\omega x}{\alpha}\right) \\
+    &= \alpha \left( x^2 + \frac{i\omega x}{\alpha} + \left( \frac{i\omega}{2\alpha} \right)^2 - \left( \frac{i\omega}{2\alpha} \right)^2 \right) \\ \label{eq:cuadra} 
+    &= \alpha \left( \left( x + \frac{i\omega}{2\alpha} \right)^2 + \frac{\omega^2}{4\alpha^2}  \right) \\
+    &= \alpha \left( x + \frac{i\omega}{2\alpha} \right)^2 + \frac{\omega^2}{4\alpha}.
+  \end{aligned}
+\end{equation} 
+Con esto, la integral \eqref{eq:gay} puede ser reescrita como:
+\begin{equation}
+ \begin{aligned}
+   \mathcal{F}[e^{-\alpha x^2}](\omega) &=  \int_{-\infty}^{\infty} dx \; e^{-(\alpha x^2 + i\omega x)} \\
+    &= e^{-\omega^2 / (4\alpha)} \; \int_{-\infty}^{\infty} dx \; e^{-\alpha (x + \frac{i\omega}{2\alpha})^2} \\ 
+    &= e^{-\omega^2 / (4\alpha)} \; \int_{-\infty}^{\infty} d\eta \; e^{-\alpha \eta^2}. 
+ \end{aligned}
+\end{equation}
+Donde se utiliz\'o el cambio de variable $\eta = x + i\omega/(2\alpha)$. La \'ultima integral es la conocida Gaussiana, la cual se resuelve f\'acilmente con un cambio de coordenadas cartesianas a polares:
+\begin{equation}
+  \begin{aligned}
+    I &=  \int_{-\infty}^{\infty} dx \; e^{-\alpha x^2}, \\
+    I^2 = I \cdot I &= \left( \int_{-\infty}^{\infty} dx \; e^{-\alpha x^2}  \right)\cdot \left( \int_{-\infty}^{\infty} dy \; e^{-\alpha y^2}  \right) . \label{eq:i2}
+  \end{aligned}
+\end{equation}
+Por teorema de Fubini, podemos representar esto como una sola integral del producto de los integrandos:
+\begin{equation}
+    I^2 =\int_{-\infty}^{\infty} \int_{-\infty}^{\infty}  dxdy \; e^{-\alpha (x^2 + y^2)}.
+  \end{equation}
+Definimos el cambio de coordenadas:
+\[
+\begin{cases}
+  x = r\cos\theta, \qquad r \in [0, \infty) \\
+  y = r\sin\theta, \qquad \theta \in [0, 2\pi)
+\end{cases}
+\]
+con su respectivo Jacobiano:
+\[
+J = 
+\begin{vmatrix}
+\dfrac{\partial x}{\partial r} & \dfrac{\partial x}{\partial \theta} \\[6pt]
+\dfrac{\partial y}{\partial r} & \dfrac{\partial y}{\partial \theta}
+\end{vmatrix}
+=
+\begin{vmatrix}
+\cos\theta & -r\sin\theta \\
+\sin\theta & r\cos\theta
+\end{vmatrix}
+\]
+Calculando el determinante:
+\[
+J = r\cos^2\theta + r\sin^2\theta = r,
+\]
+por lo tanto,
+\[
+\left|\dfrac{\partial(x,y)}{\partial(r,\theta)}\right| = r.
+\]
+As\'i, \eqref{eq:i2} se puede reescribir como:
+\begin{equation}
+  \begin{aligned}
+    I^2 &= \int_{0}^{2\pi} \int_{0}^{\infty} dr d\theta \; \left|\dfrac{\partial(x,y)}{\partial(r,\theta)}\right|  e^{-\alpha r^2} \\
+    &= \int_{0}^{2\pi} \int_{0}^{\infty} dr d\theta \; r e^{-\alpha r^2} \\
+    &= 2\pi \int_{0}^{\infty} dr \; r e^{-\alpha r^2} \\
+    &= -\frac{2\pi}{2\alpha} \left . \left( e^{-\alpha r^2} \right) \right|_{0}^{\infty} \\
+    &= -\frac{\pi}{\alpha} \left( 0 - 1 \right) \\
+    &= \frac{\pi}{\alpha}.
+  \end{aligned}
+  \end{equation}
+  Por lo tanto se concluye que: 
+  \begin{equation}
+    I = \sqrt{\frac{\pi}{\alpha}}, \label{eq:gauss_num}
+  \end{equation}
+  y que:
+  \begin{equation}
+    \mathcal{F}[e^{-\alpha x^2}](\omega) = \sqrt{\frac{\pi}{\alpha}}\; e^{-\omega^2/(4\alpha)}. \label{eq:gauss-fourier}
+  \end{equation}
+  
+
+  \subsection{Delta de Dirac}
+  La delta de Dirac, usada generalmente para representar pulsos instant\'aneos, se define como:
+  \begin{equation}
+    \delta(x-\xi) =
+    \begin{cases}
+     0, \quad x \neq \xi \\
+     \infty, \quad x = \xi
+  \end{cases}
+  \end{equation}
+  cumpliendo las propiedades:
+  \begin{align}
+    \int_{-\infty}^{\infty}dx \; \delta(x-\xi) &=1, \\
+     \int_{-\infty}^{\infty}dx \; \delta(x-\xi) f(x) &= f(\xi).
+  \end{align}
+  Con estas propiedades, resulta f\'acil calcular la transformada de Fourier de esta funci\'on:
+  \begin{equation}
+  \begin{aligned}
+    \mathcal{F}[\delta (x-\xi)](\omega) &= \int_{-\infty}^{\infty} dx \; \delta (x-\xi) \; e^{-i\omega x} \\
+    &= e^{-i\omega \xi}.
+  \end{aligned}
+  \end{equation}
+  pudiendo definir la delta de Dirac como:
+   \begin{equation}
+  \begin{aligned}
+    \delta (x-\xi) &= \mathcal{F}^{-1}[e^{-i\omega \xi}](\omega) \\
+    &= \frac{1}{2\pi}\int_{-\infty}^{\infty} d\omega \;
+    e^{-i\omega \xi} \; e^{i\omega x} \\
+    &= \frac{1}{2\pi}\int_{-\infty}^{\infty} d\omega \;
+    e^{i\omega (x-\xi) }. 
+  \end{aligned}
+  \end{equation}
+  En particular:
+  \begin{equation}
+    \delta (x) = \frac{1}{2\pi} \int_{-\infty}^{\infty} d\omega \;
+    e^{i\omega x }.  
+  \end{equation}
+  Se puede generalizar la delta de Dirac a $n$ dimensiones:
+  \begin{equation}
+    \begin{aligned}
+      \delta^{(n)}\left(\vec{x} - \vec{\xi} \right) = \prod_{k=1}^{n} \delta (x_k - \xi_k), 
+    \end{aligned}
+  \end{equation}
+ donde su transformada de Fourier es:
+  \begin{equation}
+    \begin{aligned}
+      \mathcal{F}[\delta^{(n)}( \vec{x} - \vec{\xi} )] (\vec{\omega}) &=
+      \int_{-\infty}^{\infty} d^n x \; \; \delta^{(n)}\left(\vec{x} - \vec{\xi} \right) \; e^{-i(\vec{\omega} \cdot \vec{x})} \\
+      &= \int_{-\infty}^{\infty} d^n x \; \; \prod_{k=1}^n \left( \delta (x_k - \xi_k) \; e^{-i\omega_k x_k} \right),
+    \end{aligned}
+    \end{equation}
+ aplicando teorema de Fubini, obtenemos:
+ \begin{equation}
+   \begin{aligned}
+     \mathcal{F}[\delta^{(n)}( \vec{x} - \vec{\xi} )] (\vec{\omega}) &=
+      \prod_{k=1}^n \left( \int_{-\infty}^{\infty} dx_k \; \delta(x_k - \xi_k) \; e^{-i\omega_k x_k} \right) \\
+      &= \prod_{k=1}^n \mathcal{F}[\delta(x_k - \xi_k)](\omega_k) \\
+      &= \prod_{k=1}^n e^{-i\omega_k \xi_k}\\
+      &= e^{-i(\vec{\omega} \cdot \vec{\xi})},
+   \end{aligned}
+ \end{equation}
+en particular:
+\begin{equation}
+ \mathcal{F}[\delta^{(n)}(\vec{x})](\vec{\omega}) = 1.
+\end{equation}
+Finalmente, con la transformada inversa, podemos definir la delta de Dirac $n$ dimensional como:
+\begin{equation}
+  \begin{aligned}
+    \delta^{(n)}\left(\vec{x} - \vec{\xi}\right) &= \frac{1}{(2\pi)^n} \int_{-\infty}^{\infty} d^n \omega \; \; e^{-i(\vec{\omega}\cdot \vec{\xi})}  \; e^{i(\vec{\omega} \cdot \vec{x})} \\
+    &= \frac{1}{(2\pi)^n} \int_{-\infty}^{\infty} d^n \omega \; \; e^{i\vec{\omega}\cdot (\vec{x} - \vec{\xi})}. 
+  \end{aligned}
+  \end{equation}
+
+  
+  \section{Aplicaci\'on a la Ecuaci\'on del Calor}
+  
+  Volvemos al problema original de encontrar la soluci\'on a la ecuaci\'on del calor \eqref{eq:heat} sujeta a:
+  \begin{equation}
+    \begin{aligned}
+  x,y,z \in (-\infty, \infty),\; &t\in [0,  \infty),\\
+    \\
+    \lim_{x,y,z \rightarrow \pm \infty} \psi(\vec{x},t) &= 0, \\
+    \\
+      \psi(\vec{x},0) = \phi(\vec{x}) &= T_0\: \delta^{(3)}(\vec{x}).
+    \end{aligned}
+  \end{equation}
+  Podemos partir del supuesto que $\psi$ y sus derivadas son bien comportadas. Con esto, ocupando el resultado \eqref{eq:partial}, aplicamos la transformada de Fourier respecto a las coordenadas espaciales a ambos lados de \eqref{eq:heat}:
+  \begin{equation}
+    \begin{aligned}
+      \sum_{k=1}^3 \mathcal{F}\left[ \frac{\partial^2 \psi}{\partial x_i^2} \right] (\vec{\omega},t) &= \frac{1}{\alpha} \mathcal{F} \left[ \frac{\partial \psi}{\partial t} \right](\vec{\omega},t) \\ \label{eq:heat2} 
+      -(\omega_x^2 + \omega_y^2 + \omega_z^2) \hat{\psi}(\vec{\omega},t) &= \frac{1}{\alpha} \mathcal{F}\left[ \frac{\partial \psi}{\partial t} \right](\vec{\omega},t), 
+    \end{aligned}
+    \end{equation}
+    adem\'as, transformando la condici\'on inicial, tenemos:
+    \begin{equation}
+    \begin{aligned}
+    \hat{\phi}(\vec{\omega})  &= \mathcal{F}[\psi(\vec{x},0)](\vec{\omega},t)  \\ &= T_0\;  \mathcal{F}[\delta^{(3)}(\vec{x})](\vec{\omega}) \\
+      &= T_0.
+    \end{aligned}
+    \end{equation}
+    Notemos en \eqref{eq:heat2} que podemos conmutar los operadores al lado derecho, pues uno tiene dependencia espacial y el otro temporal, obteniendo as\'i:
+    \begin{equation}
+      -\alpha(\omega_x^2 + \omega_y^2 + \omega_z^2)\; \hat{\psi}(\vec{\omega},t) = \frac{\partial}{\partial t} \hat{\psi}(\vec{\omega},t).
+    \end{equation}
+    Esta es una ecuaci\'on diferencial ordinaria sobre la variable $t$. Integrando, obtenemos (y con $\hat{\psi}' = \partial_t \hat{\psi}$):
+    \begin{equation}
+      \begin{aligned}
+       -\int dt \; \alpha(\omega_x^2 + \omega_y^2 + \omega_z^2) &= \int  dt \; \frac{\hat{\psi}'}{\hat{\psi}} \\
+         -\alpha(\omega_x^2 + \omega_y^2 + \omega_z^2)t + \mathcal{H}(\vec{\omega}) &= \ln |\hat{\psi}| \\
+         \hat{\psi}(\vec{\omega},t) &= e^{\mathcal{H}(\vec{\omega})} \; e^{-\alpha(\omega_x^2 + \omega_y^2 + \omega_z^2)t} \\
+           \hat{\psi}(\vec{\omega},t) &= \mathcal{B}(\vec{\omega}) \; e^{-\alpha(\vec{\omega}\cdot \vec{\omega})t}.
+      \end{aligned}
+    \end{equation}
+    La funci\'on $\mathcal{B}(\vec{\omega})$ queda determinada al evaluar nuestra funci\'on $\hat{\psi}$ en $t=0$, pues podemos usar la condici\'on inicial:
+  \begin{equation}
+   \begin{aligned}
+     \hat{\psi}(\vec{\omega},0)  &= \mathcal{B}(\vec{\omega}) \; e^{-\alpha (\vec{\omega} \cdot \vec{\omega})0} \\ 
+     &=\mathcal{B}(\vec{\omega})\\
+       &= \hat{\phi}(\vec{\omega}) \\
+       &= T_0.
+   \end{aligned}
+  \end{equation}
+  Con esto, nuestra funci\'on $\hat{\psi}$ viene dada por:
+\begin{equation}
+  \hat{\psi}(\vec{\omega},t) = T_0 \; e^{-\alpha(\vec{\omega}\cdot \vec{\omega})t}.
+\end{equation}
+Finalmente, para obtener nuestra soluci\'on $\psi(\vec{x},t)$, aplicamos la transformada inversa de Fourier en tres dimensiones:
+\begin{align}
+   \mathcal{F}[\psi(\vec{x},0)](\vec{\omega},t) &= \mathcal{F}^{-1}[\hat{\psi}(\vec{\omega},t)](\vec{x}) \\
+   &= \frac{1}{8\pi^3} \int_{-\infty}^{\infty} d^3 \omega \; T_0 \; e^{-\alpha(\vec{\omega}\cdot \vec{\omega})t} \; e^{i(\vec{\omega} \cdot \vec{x})} \\ 
+   &= \frac{T_0}{8\pi^3} \int_{-\infty}^{\infty} d^3 \omega \; e^{-\alpha(\vec{\omega}\cdot \vec{\omega})t + i(\vec{\omega} \cdot \vec{x})} \\
+   &= \frac{T_0}{8\pi^3} \prod_{k=1}^3 \left( \int_{-\infty}^{\infty} d \omega_k \; e^{-\alpha \omega_k^2 t + i\omega_k x_k} \right). \label{eq:prod}
+ \end{align}
+ Donde se ha utilizado el teorema de Fubini para separar las integrales como productos. Vemos que el exponente del t\'ermino del productorio es parecido a \eqref{eq:cuadra}, es m\'as, vemos que se puede factorizar como:
+ \begin{equation}
+  -\alpha t \left(\omega_k - \frac{ix_k}{2\alpha t}\right)^2 - \frac{x_k^2}{4\alpha t}.
+ \end{equation}
+ Con esto, la ecuaci\'on \eqref{eq:prod} se expresa como:
+ \begin{align}
+   &\frac{T_0}{8\pi^3} \prod_{k=1}^3 \left( \int_{-\infty}^{\infty} d \omega_k \; e^{-\alpha t (\omega_k +\frac{ix_k}{2\alpha t})^2 \; -\;  x_k^2/(4\alpha t) } \right), \\ 
+   = \; &\frac{T_0}{8\pi^3} \; e^{-(x_1^2 + x_2^2 + x_3^2)/(4\alpha t)}\; \prod_{k=1}^3 \left( \int_{-\infty}^{\infty} d \omega_k \; e^{-\alpha t (\omega_k +\frac{ix_k}{2\alpha t})^2} \right). \label{eq:almost}
+ \end{align}
+ Por \'ultimo, aplicando el cambio de variables $\eta_k = \omega_k + (ix_k)/(2\alpha t)$ y recordando que $(x_1, x_2, x_3) = (x,y,z)$, la ecuaci\'on \eqref{eq:almost} se convierte en:
+ \begin{equation}
+ \frac{T_0}{8\pi^3} \; e^{-(x^2 + y^2 + z^2)/(4\alpha t)}\; \prod_{k=1}^3 \left( \int_{-\infty}^{\infty} d \eta_k \; e^{-\alpha t \eta_k^2} \right),  
+ \end{equation}
+ donde cada t\'ermino del productorio es una Gaussiana, cuyo valor ya calculamos en \eqref{eq:gauss_num}. Tenemos:
+ \begin{equation}
+  \frac{T_0}{8\pi^3} \; e^{-(x^2 + y^2 + z^2)/(4\alpha t)}\; \left( \sqrt{\frac{\pi}{\alpha t}}\right)^3,
+ \end{equation}
+obteniendo as\'i la soluci\'on :
+\begin{equation}
+  \psi(\vec{x},t) =\frac{T_0}{8(\pi \alpha t)^{3/2}} \; e^{-(x^2 + y^2 + z^2)/(4\alpha t)},
+\end{equation}
+o en coordenadas esf\'ericas:
+\begin{equation}
+ \psi(\vec{r},t) +=\frac{T_0}{8(\pi \alpha t)^{3/2}} \; e^{-r^2/(4\alpha t)}, 
+\end{equation}
+En la siguiente página se presenta la resolución numérica de la ecuación de calor en 3D (evaluada en el plano z=0) para tres instantes de tiempo distintos. Las gráficas ilustran como evoluciona el sistema bajo una difusividad térmica $\alpha=1.0$ y una temperatura inicial $T_0=1.0$.
+\newpage
+
+\begin{figure}[p] % [p] intenta ponerlas todas en una página propia
+    \centering
+    
+    \includegraphics[scale=0.45]{calor_01.pdf}
+    \caption{Distribución inicial ($t = 0.1$ s).}
+    
+    \vspace{1cm} % Espacio generoso entre ellas
+
+    \includegraphics[scale=0.45]{calor_05.pdf}
+    \caption{Distribución intermedia ($t = 0.5$ s).}
+
+    \vspace{1cm}
+
+    \includegraphics[scale=0.45]{calor_10.pdf}
+    \caption{Distribución final ($t = 1.0$ s).}
+    
+    \label{fig:serie_temporal_calor}
+\end{figure}
+  \end{document}
